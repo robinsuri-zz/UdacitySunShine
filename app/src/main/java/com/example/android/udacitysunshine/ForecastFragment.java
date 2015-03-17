@@ -57,13 +57,17 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            FetchWeatherTask weatherTask = new FetchWeatherTask();
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-            weatherTask.execute(location);
+            updateWeather();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateWeather() {
+        FetchWeatherTask weatherTask = new FetchWeatherTask();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+        weatherTask.execute(location);
     }
 
     public ForecastFragment() {
@@ -74,20 +78,7 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        String[] weatherData = new String[]{
-                "Today-Sunny-88/63",
-                "Tomorrow-Foggy-80/60",
-                "Wed-Rain-100/10",
-                "Today-Sunny-88/63",
-                "Tomorrow-Foggy-80/60",
-                "Wed-Rain-100/10",
-                "Today-Sunny-88/63",
-                "Tomorrow-Foggy-80/60"
-
-        };
-
-        List<String> weatherDataList = new ArrayList<String>(Arrays.asList(weatherData));
-        forecastAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview, weatherDataList);
+        forecastAdapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview, new ArrayList<String>());
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(forecastAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -103,10 +94,13 @@ public class ForecastFragment extends Fragment {
             }
         });
 
-
-        new FetchWeatherTask().execute("94043");
-
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
     }
 
     private class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
