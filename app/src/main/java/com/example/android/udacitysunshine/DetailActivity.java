@@ -1,6 +1,7 @@
 package com.example.android.udacitysunshine;
 
 import android.content.Intent;
+import android.media.audiofx.BassBoost;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -48,6 +49,7 @@ public class DetailActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 
